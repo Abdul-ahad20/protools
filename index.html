@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pro Tools - Image Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+}
+
+header {
+    background: #111;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    background: #222;
+    flex-wrap: wrap;
+}
+
+nav button {
+    color: white;
+    background: none;
+    border: none;
+    padding: 12px 16px;
+    cursor: pointer;
+}
+
+nav button:hover {
+    background: #444;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 15px;
+}
+
+.tool {
+    display: none;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+input, select, button {
+    margin-top: 10px;
+    padding: 8px;
+    width: 100%;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Ad banner placeholders */
+.ad {
+    background: #ddd;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+img {
+    max-width: 100%;
+    margin-top: 10px;
+}
+
+footer {
+    background: #111;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Pro Tools</h1>
+    <p>Online Image Tools</p>
+</header>
+
+<nav>
+    <button onclick="showTool('resize')">Resizer</button>
+    <button onclick="showTool('compress')">Compressor</button>
+    <button onclick="showTool('convert')">Converter</button>
+</nav>
+
+<div class="container">
+
+    <!-- TOP AD -->
+    <div class="ad">Top Banner Ad (AdMob)</div>
+
+    <!-- IMAGE RESIZER -->
+    <div class="tool" id="resize">
+        <h2>Image Resizer</h2>
+        <input type="file" id="resizeInput">
+        <input type="number" id="width" placeholder="Width (px)">
+        <input type="number" id="height" placeholder="Height (px)">
+        <button onclick="resizeImage()">Resize</button>
+        <canvas id="resizeCanvas"></canvas>
+        <a id="resizeDownload" download="resized.png">Download Image</a>
+    </div>
+
+    <!-- IMAGE COMPRESSOR -->
+    <div class="tool" id="compress">
+        <h2>Image Compressor</h2>
+        <input type="file" id="compressInput">
+        <select id="quality">
+            <option value="0.2">Low</option>
+            <option value="0.5">Medium</option>
+            <option value="0.8">High</option>
+        </select>
+        <button onclick="compressImage()">Compress</button>
+        <canvas id="compressCanvas"></canvas>
+        <a id="compressDownload" download="compressed.jpg">Download Image</a>
+    </div>
+
+    <!-- IMAGE CONVERTER -->
+    <div class="tool" id="convert">
+        <h2>Image Converter</h2>
+        <input type="file" id="convertInput">
+        <select id="format">
+            <option value="image/png">PNG</option>
+            <option value="image/jpeg">JPG</option>
+        </select>
+        <button onclick="convertImage()">Convert</button>
+        <canvas id="convertCanvas"></canvas>
+        <a id="convertDownload">Download Image</a>
+    </div>
+
+    <!-- BOTTOM AD -->
+    <div class="ad">Bottom Banner Ad (AdMob)</div>
+
+</div>
+
+<footer>
+    © 2025 Pro Tools
+</footer>
+
+<script>
+function showTool(id) {
+    document.querySelectorAll('.tool').forEach(t => t.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+}
+showTool('resize');
+
+/* IMAGE RESIZER */
+function resizeImage() {
+    const file = document.getElementById('resizeInput').files[0];
+    const w = document.getElementById('width').value;
+    const h = document.getElementById('height').value;
+
+    if (!file) return alert("Select an image");
+
+    const img = new Image();
+    img.onload = () => {
+        const canvas = document.getElementById('resizeCanvas');
+        canvas.width = w || img.width;
+        canvas.height = h || img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        document.getElementById('resizeDownload').href = canvas.toDataURL();
+    };
+    img.src = URL.createObjectURL(file);
+}
+
+/* IMAGE COMPRESSOR */
+function compressImage() {
+    const file = document.getElementById('compressInput').files[0];
+    const quality = document.getElementById('quality').value;
+
+    if (!file) return alert("Select an image");
+
+    const img = new Image();
+    img.onload = () => {
+        const canvas = document.getElementById('compressCanvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        document.getElementById('compressDownload').href =
+            canvas.toDataURL("image/jpeg", quality);
+    };
+    img.src = URL.createObjectURL(file);
+}
+
+/* IMAGE CONVERTER */
+function convertImage() {
+    const file = document.getElementById('convertInput').files[0];
+    const format = document.getElementById('format').value;
+
+    if (!file) return alert("Select an image");
+
+    const img = new Image();
+    img.onload = () => {
+        const canvas = document.getElementById('convertCanvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+
+        const link = document.getElementById('convertDownload');
+        link.href = canvas.toDataURL(format);
+        link.download = "converted";
+        link.innerText = "Download Image";
+    };
+    img.src = URL.createObjectURL(file);
+}
+</script>
+
+</body>
+</html>
